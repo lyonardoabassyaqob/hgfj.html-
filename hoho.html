@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CIPHER VOID | مختبر التشفير</title>
+<meta name="theme-color" content="#000000"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Share+Tech+Mono&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#000;--panel:rgba(10,0,0,.82);--red:#ff1a2e;--red2:#8a0010;--txt:#f2d4d7;--dim:#a06a70;--line:#4a0009;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:"Cairo",system-ui,sans-serif;min-height:100vh}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 35%,#000 100%)}
+main{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:28px 16px 48px}
+h1{font-family:"Share Tech Mono",monospace;font-size:clamp(2rem,8vw,3.6rem);margin:0;letter-spacing:.08em;direction:ltr;text-align:center;color:var(--red);text-shadow:0 0 18px rgba(255,26,46,.6);position:relative}
+h1::before,h1::after{content:attr(data-t);position:absolute;inset:0;opacity:.0}
+h1.g::before{opacity:.8;color:#fff;transform:translate(3px,0);clip-path:inset(20% 0 55% 0)}
+h1.g::after{opacity:.8;color:#800;transform:translate(-3px,0);clip-path:inset(60% 0 10% 0)}
+.sub{text-align:center;color:var(--dim);margin:.4rem 0 1.6rem}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;font:700 1rem "Cairo";padding:.7rem .3rem;background:#080000;color:var(--dim);border:1px solid var(--line);cursor:pointer}
+.tabs button[aria-selected=true]{color:#000;background:var(--red);border-color:var(--red);box-shadow:0 0 16px rgba(255,26,46,.5)}
+.card{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--red);padding:18px;backdrop-filter:blur(3px)}
+label{display:block;font-weight:700;margin:12px 0 6px;color:var(--txt)}
+textarea,input{width:100%;background:#050000;color:#ff6b78;border:1px solid var(--line);padding:.7rem;font:1.05rem "Share Tech Mono",monospace;direction:ltr;text-align:left;border-radius:0}
+textarea{min-height:96px;resize:vertical}
+textarea:focus,input:focus,button:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;direction:ltr}
+.row{display:flex;gap:10px;margin-top:16px}
+.row button{flex:1;font:900 1.05rem "Cairo";padding:.8rem;cursor:pointer;border:1px solid var(--red);background:transparent;color:var(--red)}
+.row button:hover{background:var(--red);color:#000}
+.row .alt{border-color:var(--dim);color:var(--txt)}
+.out{min-height:3.2rem;margin-top:6px;padding:.7rem;border:1px dashed var(--red2);font:1.15rem "Share Tech Mono",monospace;direction:ltr;text-align:left;word-break:break-all;color:#fff;white-space:pre-wrap}
+.err{color:#ff8a94;min-height:1.4rem;margin-top:8px;font-weight:700}
+details{margin-top:16px;color:var(--dim);line-height:1.8}
+summary{cursor:pointer;color:var(--red);font-weight:700}
+code{font-family:"Share Tech Mono",monospace;color:#ff6b78;direction:ltr;unicode-bidi:embed}
+.hide{display:none}
+.langbtn{position:absolute;top:4px;left:16px;z-index:3;font:700 .9rem "Share Tech Mono",monospace;padding:.25rem .65rem;background:#080000;color:var(--red);border:1px solid var(--red);cursor:pointer}
+.langbtn:hover{background:var(--red);color:#000}
+select{width:100%;margin-top:8px;background:#050000;color:#ff6b78;border:1px solid var(--line);padding:.6rem;font:1rem "Share Tech Mono",monospace;border-radius:0}
+.crk{width:100%;margin-top:10px;font:700 .95rem "Cairo";padding:.65rem;background:transparent;color:var(--txt);border:1px solid var(--dim);cursor:pointer}
+.crk:hover{background:var(--red);color:#000;border-color:var(--red)}
+.tabs button{font-size:.88rem;padding:.7rem .1rem;min-width:0}
+#steps{direction:ltr;text-align:left;color:var(--txt)}
+.pg{display:grid;grid-template-columns:repeat(5,2.2rem);gap:3px;direction:ltr;margin:8px 0}
+.pg span{text-align:center;padding:.3rem 0;border:1px solid var(--line);font-family:'Share Tech Mono',monospace;color:#ff6b78}
+.pg .hl{background:var(--red);color:#000}
+pre{direction:ltr;text-align:left;font:1rem 'Share Tech Mono',monospace;color:#ff6b78;overflow-x:auto;margin:8px 0;white-space:pre}
+.fbs{display:flex;direction:ltr;gap:2px;height:108px;margin-top:10px}
+.fb{position:relative;flex:1}
+.fb i,.fb u{position:absolute;bottom:14px}
+.fb u{left:0;right:0;border:1px solid var(--dim)}
+.fb i{left:22%;right:22%;background:var(--red)}
+.fb b{position:absolute;bottom:0;width:100%;text-align:center;font:10px 'Share Tech Mono',monospace;color:var(--dim)}
+#wheel{display:block;margin:12px auto 0;max-width:260px;cursor:pointer}
+#wheel text{font:11px 'Share Tech Mono',monospace;fill:#ff6b78;text-anchor:middle;dominant-baseline:middle}
+#wheel .o text{fill:#f2d4d7}
+#wheel .i{transition:transform .6s cubic-bezier(.3,1.4,.5,1);transform-origin:150px 150px}
+.tabs{flex-wrap:wrap}
+.tabs button{flex:1 1 18%;font-size:.8rem}
+.hi{display:block;width:100%;text-align:left;direction:ltr;margin-top:6px;padding:.45rem .6rem;background:#050000;color:#ff6b78;border:1px solid var(--line);font:.9rem 'Share Tech Mono',monospace;cursor:pointer}
+.hi:hover{border-color:var(--red)}
+#boot{position:fixed;inset:0;z-index:50;background:#000;display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s;cursor:pointer}
+#boot pre{color:var(--red);font:clamp(.8rem,3.4vw,1.1rem) 'Share Tech Mono',monospace;text-shadow:0 0 8px rgba(255,26,46,.6);white-space:pre-wrap;margin:0;max-width:640px;width:100%}
+#boot.off{opacity:0;pointer-events:none}
+#snd{left:auto;right:16px}
+@media(prefers-reduced-motion:reduce){h1.g::before,h1.g::after{opacity:0}}
+</style>
+</head>
+<body>
+<canvas id="rain" aria-hidden="true"></canvas>
+<div id="boot" aria-hidden="true"><pre id="bt"></pre></div>
+<main>
+<button class="langbtn" id="lang" aria-label="Language">EN</button>
+<button class="langbtn" id="snd" aria-label="Sound">🔇</button>
+<h1 id="ttl" data-t="CIPHER//VOID">CIPHER//VOID</h1>
+<p class="sub" data-k="sub">مختبر التشفير الكلاسيكي: قيصر، بلايفير، هيل</p>
+<div class="tabs" role="tablist">
+<button role="tab" data-c="caesar" data-k="t1" aria-selected="true">قيصر</button>
+<button role="tab" data-c="atbash" data-k="t4" aria-selected="false">أتباش</button>
+<button role="tab" data-c="vigenere" data-k="t5" aria-selected="false">فيجنير</button>
+<button role="tab" data-c="playfair" data-k="t2" aria-selected="false">بلايفير</button>
+<button role="tab" data-c="hill" data-k="t3" aria-selected="false">هيل</button>
+<button role="tab" data-c="railfence" data-k="t7" aria-selected="false">الزجزاج</button>
+<button role="tab" data-c="affine" data-k="t8" aria-selected="false">أفين</button>
+<button role="tab" data-c="morse" data-k="t9" aria-selected="false">مورس</button>
+<button role="tab" data-c="base64" data-k="t10" aria-selected="false">Base64</button>
+</div>
+<div style="margin-bottom:14px"><button id="cbtn" class="crk" data-k="t6" style="margin:0">🎯 وضع التحدي</button></div>
+<section class="card" id="mc">
+<label for="inp" data-k="lt">النص</label>
+<textarea id="inp" placeholder="HELLO WORLD" spellcheck="false"></textarea>
+
+<div id="p-caesar"><label for="shift" data-k="ls">الإزاحة (0 إلى 25)</label><input id="shift" type="number" min="0" max="25" value="3"><button id="crk" class="crk" data-k="crk">كسر تلقائي (تحليل التكرار)</button><div id="wheel"></div></div>
+<div id="p-atbash" class="hide"></div>
+<div id="p-vigenere" class="hide"><label for="vk" data-k="lk">الكلمة المفتاحية</label><input id="vk" value="LEMON" spellcheck="false"></div>
+<div id="p-railfence" class="hide"><label for="rf" data-k="lrf">عدد القضبان (2 إلى 10)</label><input id="rf" type="number" min="2" max="10" value="3"></div>
+<div id="p-affine" class="hide"><label for="aa" data-k="laa">a (أولي مع 26)</label><input id="aa" type="number" value="5"><label for="ab" data-k="lab">b (الإزاحة)</label><input id="ab" type="number" value="8"></div>
+<div id="p-morse" class="hide"></div><div id="p-base64" class="hide"></div>
+<div id="p-playfair" class="hide"><label for="kw" data-k="lk">الكلمة المفتاحية</label><input id="kw" value="MONARCHY" spellcheck="false"></div>
+<div id="p-hill" class="hide"><label data-k="lh">مصفوفة المفتاح</label>
+<div class="keys"><input id="k0" type="number" value="3"><input id="k1" type="number" value="3"><input id="k2" type="number" value="2"><input id="k3" type="number" value="5"><input id="k4" type="number" value="0" class="hide"><input id="k5" type="number" value="0" class="hide"><input id="k6" type="number" value="0" class="hide"><input id="k7" type="number" value="0" class="hide"><input id="k8" type="number" value="0" class="hide"></div><select id="hn" aria-label="Matrix size"><option value="2">2×2</option><option value="3">3×3</option></select></div>
+
+<div class="row"><button id="enc" data-k="enc">تشفير</button><button id="dec" data-k="dec">فك التشفير</button></div>
+<div class="err" id="err" role="alert"></div>
+<label data-k="lr">النتيجة</label>
+<div class="out" id="out" aria-live="polite"></div>
+<div class="row"><button class="alt" id="cp" data-k="cp">نسخ النتيجة</button><button class="alt" id="use" data-k="use">استخدام النتيجة كمدخل</button></div>
+<div class="row"><button class="alt" id="sh" data-k="sh">🔗 نسخ رابط المشاركة</button><button class="alt hide" id="inst" data-k="inst">📲 تثبيت كتطبيق</button></div>
+<details><summary data-k="hl">سجل العمليات</summary><div id="hlist"></div><button class="crk" id="hclr" data-k="hclr">مسح السجل</button></details>
+<details open><summary data-k="ss">خطوات التنفيذ</summary><div id="steps"></div></details>
+<details open><summary data-k="fs">تحليل تكرار الحروف</summary><div class="fbs" id="freq"></div><div data-k="fl">أحمر: النتيجة · رمادي: الإنجليزية الطبيعية</div></details>
+<details open><summary data-k="sum">كيف تعمل هذه الشيفرة؟</summary><div id="how"></div></details>
+<details open><summary data-k="hs">نبذة تاريخية</summary><div id="hist"></div></details>
+</section>
+<section class="card hide" id="chal">
+<div id="cscore" style="color:var(--red);font-weight:700"></div>
+<label data-k="cq">فك هذه الشيفرة</label>
+<div class="out" id="cct"></div>
+<div id="chint" style="color:var(--dim);margin-top:8px"></div>
+<input id="cans" style="margin-top:10px" spellcheck="false">
+<div class="row"><button id="cchk" data-k="cchk">تحقق</button><button class="alt" id="cnew" data-k="cnew">تحدٍّ جديد</button></div>
+<div class="err" id="cmsg"></div>
+</section>
+</main>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},cur="caesar",lang="ar";
+var mod=function(n){return((n%26)+26)%26};
+var AZ="ABCDEFGHIKLMNOPQRSTUVWXYZ";
+var HOW={
+railfence:"تُكتب الحروف بشكل متعرّج (زجزاج) على عدة قضبان ثم تُقرأ قضيبًا بعد قضيب. هي شيفرة تبديل: الحروف نفسها لكن بترتيب مختلف.",
+affine:"تعميم لشيفرة قيصر: <code>E = (a·x + b) mod 26</code>. الفك: <code>D = a⁻¹·(y − b) mod 26</code>. يجب أن يكون a أوليًّا مع 26 ليكون للمعادلة معكوس.",
+morse:"يحوّل كل حرف إلى نقاط وشرطات. تُفصل الحروف بمسافة والكلمات بـ <code>/</code>. للفك أدخل مورس مثل <code>.... ..</code>",
+base64:"يحوّل كل 3 بايتات إلى 4 رموز من 64 رمزًا. هو ترميز وليس تشفيرًا: أي شخص يستطيع فكه.",
+atbash:"تعكس الأبجدية: <code>A↔Z</code> و<code>B↔Y</code> وهكذا، بالمعادلة <code>E = 25 − x</code>. لا تحتاج مفتاحًا، والتشفير والفك هما نفس العملية.",
+vigenere:"تستخدم كلمة مفتاحية بدل إزاحة واحدة: يُزاح كل حرف بمقدار حرف المفتاح المقابل (A=0 … Z=25) ويتكرر المفتاح. المعادلة: <code>E = (x + k<sub>i</sub>) mod 26</code>.",
+caesar:"تزيح كل حرف بعدد ثابت من المواضع في الأبجدية. مع إزاحة 3 يصبح <code>A→D</code>. المعادلة: <code>E = (x + k) mod 26</code> وللفك <code>D = (x − k) mod 26</code>. المسافات والرموز تبقى كما هي.",
+playfair:"تُبنى مصفوفة 5×5 من الكلمة المفتاحية ثم باقي الحروف (I وJ حرف واحد). يُقسَّم النص إلى أزواج. في نفس الصف: حرف على اليمين. في نفس العمود: حرف للأسفل. غير ذلك: تبديل زاويتي المستطيل. الحرفان المكرران يُفصل بينهما بـ X.",
+hill:"يُحوَّل كل زوج حروف إلى متجه، ويُضرب بمصفوفة المفتاح modulo 26: <code>C = K · P mod 26</code>. الفك يحتاج معكوس المصفوفة، ويشترط أن يكون المحدد <code>ad − bc</code> أوليًّا مع 26 (أي ليس زوجيًّا ولا مضاعفًا لـ 13). مثال صالح: 3 3 2 5."
+};
+var HISTA={
+railfence:"شيفرة تبديل قديمة تُعرف أيضًا بالزجزاج، ويُروى أنها استُخدمت في الحرب الأهلية الأمريكية. سهلة الكسر لأن عدد مفاتيحها صغير، لكنها أساس لشيفرات تبديل أقوى.",
+affine:"امتداد رياضي لشيفرة قيصر يدمج الضرب والجمع في حساب modulo. عدد مفاتيحها 312 فقط (12 قيمة لـ a وـ 26 لـ b)، فتُكسر بسهولة، وتُدرّس لتعليم الحساب المعياري.",
+morse:"طوّره صاموئيل مورس وألفريد فيل في ثلاثينيات وأربعينيات القرن التاسع عشر لإرسال الرسائل بالتلغراف. هو ترميز لا شيفرة سرية، وصار لاحقًا لغة إشارات للملاحة واللاسلكي.",
+base64:"ظهر مع بروتوكولات البريد الإلكتروني (MIME) في بداية التسعينيات لإرسال بيانات ثنائية عبر قنوات نصية. ليس تشفيرًا ولا يحمي الأسرار، فلا تعتمد عليه للحماية.",
+atbash:"من أقدم الشيفرات المعروفة، وأصلها عبري؛ واسمها مأخوذ من أول حرف وآخر حرف ثم الثاني والثاني من الآخر في الأبجدية العبرية (ألف، تاو، بيت، شين). ويُعتقد أن أمثلة منها وردت في سفر إرمياء.",
+vigenere:"نُسبت إلى بليز دي فيجنير، لكن جيوفان بيلاسو وصفها أولًا عام 1553. ظلت قرونًا تُلقَّب بـ«الشيفرة التي لا تُكسر» حتى كسرها تشارلز بابيج ثم فريدريش كازيسكي في القرن التاسع عشر عبر تحديد طول المفتاح.",
+caesar:"سُمّيت باسم القائد الروماني يوليوس قيصر (100–44 ق.م)، فقد ذكر المؤرخ سويتونيوس أنه كان يراسل قادته بإزاحة ثلاثة أحرف. هي من أقدم الشيفرات المعروفة وأبسطها، لكن مفاتيحها 25 فقط فيمكن كسرها بتجربتها كلها. وفي القرن التاسع الميلادي وصف العالم العربي الكندي في رسالته عن فك الرسائل المشفّرة طريقة تحليل التكرار، وهي أول وسيلة منهجية معروفة لكسر هذا النوع من الشيفرات. وما زالت تُستخدم اليوم للتعليم والألغاز، ومنها صيغة ROT13.",
+playfair:"اخترعها العالم البريطاني تشارلز ويتستون عام 1854، لكنها نُسبت إلى صديقه اللورد ليون بلايفير الذي روّج لها لدى الحكومة البريطانية. وهي أول شيفرة عملية تشفّر أزواج الحروف بدل الحرف الواحد، مما جعل تحليل التكرار أصعب بكثير. استخدمها الجيش البريطاني في حرب البوير والحرب العالمية الأولى، واستُعملت كذلك في الحرب العالمية الثانية. ومع تطور وسائل التحليل صارت تُكسر بسهولة عند توفر نص كافٍ.",
+hill:"ابتكرها عالم الرياضيات الأمريكي ليستر هيل ونشرها عام 1929. وهي أول شيفرة تستخدم الجبر الخطي، إذ تشفّر مجموعة حروف معًا بضرب المصفوفات. لم تنتشر عمليًّا لأنها ضعيفة أمام هجوم النص المعلوم (known-plaintext)، بسبب كونها خطية بالكامل. لكنها ظلت مهمة تاريخيًّا لأنها ربطت التشفير بالرياضيات الحديثة، ومهّدت لفكرة الانتشار (diffusion) التي تقوم عليها الشيفرات المعاصرة."};
+var HISTE={
+railfence:"An old transposition cipher, also called zigzag, said to have been used in the American Civil War. It is easy to break because the key space is small, but it underlies stronger transposition ciphers.",
+affine:"A mathematical extension of Caesar that mixes multiplication and addition modulo 26. It has only 312 keys (12 values of a times 26 of b), so it breaks easily, and it is taught to introduce modular arithmetic.",
+morse:"Developed by Samuel Morse and Alfred Vail in the 1830s and 1840s for telegraph messages. It is an encoding, not a secret cipher, and later became a universal signaling language at sea and on radio.",
+base64:"Appeared with the MIME email standards in the early 1990s to send binary data over text channels. It is not encryption and protects no secrets, so never rely on it for protection.",
+atbash:"One of the oldest known ciphers, of Hebrew origin. Its name comes from pairing the first and last letters of the Hebrew alphabet, then the second and second-to-last (aleph-tav-bet-shin). Examples are thought to appear in the Book of Jeremiah.",
+vigenere:"Attributed to Blaise de Vigenère, but first described by Giovan Battista Bellaso in 1553. For centuries it was called the unbreakable cipher, until Charles Babbage and later Friedrich Kasiski broke it in the 19th century by finding the key length.",
+caesar:"Named after the Roman general Julius Caesar (100–44 BC); the historian Suetonius records that he sent messages to his commanders with a shift of three letters. It is among the oldest and simplest known ciphers, but it has only 25 keys, so trying them all breaks it. In the 9th century the Arab scholar Al-Kindi described frequency analysis in his treatise on deciphering cryptographic messages, the first known systematic way to break this kind of cipher. It survives today in teaching and puzzles, for example as ROT13.",
+playfair:"Invented by the British scientist Charles Wheatstone in 1854, but named after his friend Lord Playfair, who promoted it to the British government. It was the first practical cipher to encrypt pairs of letters instead of single letters, which made frequency analysis much harder. The British army used it in the Boer War and the First World War, and it also saw use in the Second World War. As analysis improved, it became easy to break whenever enough text was available.",
+hill:"Created by the American mathematician Lester Hill and published in 1929. It was the first cipher to use linear algebra, encrypting several letters at once by matrix multiplication. It never saw wide practical use because it falls to a known-plaintext attack, since it is entirely linear. Still, it matters historically: it linked cryptography to modern mathematics and anticipated the idea of diffusion that today's ciphers rely on."};
+var HOWE={
+railfence:"Letters are written in a zigzag across several rails, then read rail by rail. It is a transposition cipher: the same letters in a different order.",
+affine:"A generalization of Caesar: <code>E = (a·x + b) mod 26</code>. Decrypt: <code>D = a⁻¹·(y − b) mod 26</code>. a must be coprime with 26 so the equation has an inverse.",
+morse:"Turns each letter into dots and dashes. Letters are separated by a space and words by <code>/</code>. To decode, enter Morse like <code>.... ..</code>",
+base64:"Turns every 3 bytes into 4 symbols out of 64. It is an encoding, not encryption: anyone can reverse it.",
+atbash:"Mirrors the alphabet: <code>A↔Z</code>, <code>B↔Y</code> and so on, with <code>E = 25 − x</code>. It needs no key, and encrypting and decrypting are the same operation.",
+vigenere:"Uses a keyword instead of a single shift: each letter is shifted by the matching key letter (A=0 … Z=25), repeating the key. Formula: <code>E = (x + k<sub>i</sub>) mod 26</code>.",
+caesar:"Shifts each letter by a fixed number of positions. With shift 3, <code>A→D</code>. Formula: <code>E = (x + k) mod 26</code>, and to decrypt <code>D = (x − k) mod 26</code>. Spaces and symbols stay unchanged.",
+playfair:"A 5×5 square is built from the keyword, then the remaining letters (I and J share one cell). The text is split into pairs. Same row: take the letter to the right. Same column: take the letter below. Otherwise: swap the columns of the rectangle corners. Repeated letters in a pair are separated with X.",
+hill:"Each letter pair becomes a vector multiplied by the key matrix modulo 26: <code>C = K · P mod 26</code>. Decryption needs the matrix inverse, so the determinant <code>ad − bc</code> must be coprime with 26 (not even and not a multiple of 13). Valid example: 3 3 2 5."};
+var UI={ar:{t7:"الزجزاج",t8:"أفين",t9:"مورس",t10:"Base64",lrf:"عدد القضبان (2 إلى 10)",laa:"a (أولي مع 26)",lab:"b (الإزاحة)",sh:"🔗 نسخ رابط المشاركة",shok:"تم نسخ الرابط",hl:"سجل العمليات",hclr:"مسح السجل",inst:"📲 تثبيت كتطبيق",sub:"مختبر التشفير الكلاسيكي: قيصر، بلايفير، هيل",t1:"قيصر",t2:"بلايفير",t3:"هيل",lt:"النص",ls:"الإزاحة (0 إلى 25)",lk:"الكلمة المفتاحية",lh:"مصفوفة المفتاح",enc:"تشفير",dec:"فك التشفير",lr:"النتيجة",cp:"نسخ النتيجة",use:"استخدام النتيجة كمدخل",sum:"كيف تعمل هذه الشيفرة؟",hs:"نبذة تاريخية",t4:"أتباش",t5:"فيجنير",ss:"خطوات التنفيذ",fs:"تحليل تكرار الحروف",fl:"أحمر: النتيجة · رمادي: الإنجليزية الطبيعية",t6:"🎯 وضع التحدي",cq:"فك هذه الشيفرة",cchk:"تحقق",cnew:"تحدٍّ جديد",crk:"كسر تلقائي (تحليل التكرار)",ok:"تم النسخ",no:"تعذّر النسخ",ttl:"CIPHER VOID | مختبر التشفير"},
+en:{t7:"Rail Fence",t8:"Affine",t9:"Morse",t10:"Base64",lrf:"Rails (2 to 10)",laa:"a (coprime with 26)",lab:"b (shift)",sh:"🔗 Copy share link",shok:"Link copied",hl:"History",hclr:"Clear history",inst:"📲 Install as app",sub:"Classic cipher lab: Caesar, Playfair, Hill",t1:"Caesar",t2:"Playfair",t3:"Hill",lt:"Text",ls:"Shift (0 to 25)",lk:"Keyword",lh:"Key matrix",enc:"Encrypt",dec:"Decrypt",lr:"Result",cp:"Copy result",use:"Use result as input",sum:"How does this cipher work?",hs:"Historical background",t4:"Atbash",t5:"Vigenère",ss:"Execution steps",fs:"Letter frequency analysis",fl:"Red: result · Gray: natural English",t6:"🎯 Challenge mode",cq:"Decrypt this",cchk:"Check",cnew:"New challenge",crk:"Auto-crack (frequency analysis)",ok:"Copied",no:"Copy failed",ttl:"CIPHER VOID | Cipher Lab"}};
+var ER={"أدخل نصًّا يحتوي حروفًا إنجليزية.":"Enter text containing English letters.","طول النص المشفر يجب أن يكون زوجيًّا.":"Ciphertext length must be even.","اكتب النص أولًا.":"Type the text first.","أدخل رقم الإزاحة.":"Enter the shift value.","أدخل كلمة مفتاحية.":"Enter a keyword.","أكمل أرقام المصفوفة.":"Fill in the matrix numbers.","حدث خطأ غير متوقع.":"Unexpected error.","أدخل عدد القضبان.":"Enter the number of rails.","أدخل قيمتي a وb.":"Enter values for a and b.","قيمة a يجب أن تكون أولية مع 26 (مثل 1 3 5 7 9 11 15 17 19 21 23 25).":"a must be coprime with 26 (e.g. 1 3 5 7 9 11 15 17 19 21 23 25).","نص Base64 غير صالح.":"Invalid Base64 text.","أدخل نصًّا مشفّرًا أطول للتحليل.":"Enter a longer ciphertext to analyze.","طول النص المشفر يجب أن يكون من مضاعفات حجم المصفوفة.":"Ciphertext length must be a multiple of the matrix size."};
+function tr(s){if(lang!=="en")return s;if(ER[s])return ER[s];var m=s.match(/\((\d+)\)/);return m?"Invalid key: determinant ("+m[1]+") is not coprime with 26. Try 3 3 2 5.":s}
+function setLang(l){lang=l;var d=document.documentElement;d.lang=l;d.dir=l==="en"?"ltr":"rtl";
+document.querySelectorAll("[data-k]").forEach(function(n){n.textContent=UI[l][n.dataset.k]});
+$("lang").textContent=l==="en"?"ع":"EN";document.title=UI[l].ttl;setTab(cur)}
+function setTab(c){cur=c;$('chal').classList.add('hide');$('mc').classList.remove('hide');hrender();
+document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.c===c)});
+["caesar","atbash","vigenere","playfair","hill","railfence","affine","morse","base64"].forEach(function(n){$("p-"+n).classList.toggle("hide",n!==c)});
+$("how").innerHTML=(lang==="en"?HOWE:HOW)[c];$("hist").innerHTML=(lang==="en"?HISTE:HISTA)[c];$("err").textContent="";}
+document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){setTab(b.dataset.c)}});
+
+function caesar(t,k,dec){var s=dec?mod(-k):mod(k);
+return t.replace(/[a-z]/gi,function(ch){var b=ch<="Z"?65:97;return String.fromCharCode(mod(ch.charCodeAt(0)-b+s)+b)})}
+
+function playfair(t,key,dec){
+var k=(key.toUpperCase().replace(/J/g,"I").replace(/[^A-Z]/g,"")+AZ),sq=[],i;
+for(i=0;i<k.length;i++)if(sq.indexOf(k[i])<0)sq.push(k[i]);
+var x=t.toUpperCase().replace(/J/g,"I").replace(/[^A-Z]/g,"");
+if(!x)throw"أدخل نصًّا يحتوي حروفًا إنجليزية.";
+var pairs=[];
+if(dec){if(x.length%2)throw"طول النص المشفر يجب أن يكون زوجيًّا.";for(i=0;i<x.length;i+=2)pairs.push([x[i],x[i+1]])}
+else{for(i=0;i<x.length;){var a=x[i],b=x[i+1];if(!b){pairs.push([a,"X"]);break}
+if(a===b){pairs.push([a,"X"]);i++}else{pairs.push([a,b]);i+=2}}}
+var d=dec?4:1;PF={sq:sq,pairs:pairs};
+return pairs.map(function(p){var m=sq.indexOf(p[0]),n=sq.indexOf(p[1]),r1=(m/5)|0,c1=m%5,r2=(n/5)|0,c2=n%5;
+if(r1===r2)return sq[r1*5+(c1+d)%5]+sq[r2*5+(c2+d)%5];
+if(c1===c2)return sq[((r1+d)%5)*5+c1]+sq[((r2+d)%5)*5+c2];
+return sq[r1*5+c2]+sq[r2*5+c1]}).join("")}
+
+function gcd(a,b){return b?gcd(b,a%b):a}
+function hill(t,K,dec){
+var det=mod(K[0]*K[3]-K[1]*K[2]);
+if(gcd(det,26)!==1)throw"المفتاح غير صالح: المحدد ("+det+") ليس أوليًّا مع 26. جرّب 3 3 2 5.";
+var M=K.slice();
+if(dec){var inv=0;for(var i=1;i<26;i++)if(mod(det*i)===1)inv=i;
+M=[mod(inv*K[3]),mod(-inv*K[1]),mod(-inv*K[2]),mod(inv*K[0])]}
+var x=t.toUpperCase().replace(/[^A-Z]/g,"");
+if(!x)throw"أدخل نصًّا يحتوي حروفًا إنجليزية.";
+if(x.length%2){if(dec)throw"طول النص المشفر يجب أن يكون زوجيًّا.";x+="X"}
+var o="";
+for(var j=0;j<x.length;j+=2){var p=x.charCodeAt(j)-65,q=x.charCodeAt(j+1)-65;
+o+=String.fromCharCode(mod(M[0]*p+M[1]*q)+65,mod(M[2]*p+M[3]*q)+65)}
+return o}
+
+var EF=[8.2,1.5,2.8,4.3,12.7,2.2,2,6.1,7,.15,.77,4,2.4,6.7,7.5,1.9,.095,6,6.3,9.1,2.8,.98,2.4,.15,2,.074],ac,sndOn=false,PF,HL,CG,score=0,scT,HIS=[];
+function beep(f,d){if(!sndOn)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();var o=ac.createOscillator(),g=ac.createGain();o.type="square";o.frequency.value=f;g.gain.value=.03;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
+function atbash(t){return t.replace(/[a-z]/gi,function(ch){var b=ch<="Z"?65:97;return String.fromCharCode(b+25-(ch.charCodeAt(0)-b))})}
+function vig(t,k,dec){var j=0;return t.replace(/[a-z]/gi,function(ch){var b=ch<="Z"?65:97,s=k.charCodeAt(j++%k.length)-65;return String.fromCharCode(mod(ch.charCodeAt(0)-b+(dec?-s:s))+b)})}
+function minor(M,n,r,c){var a=[];for(var i=0;i<n;i++)for(var j=0;j<n;j++)if(i!==r&&j!==c)a.push(M[i*n+j]);return a}
+function dt(M,n){if(n===1)return M[0];if(n===2)return M[0]*M[3]-M[1]*M[2];var s=0;for(var j=0;j<n;j++)s+=(j%2?-1:1)*M[j]*dt(minor(M,n,0,j),n-1);return s}
+function hillN(t,K,dec){var n=Math.round(Math.sqrt(K.length)),det=mod(dt(K,n));
+if(gcd(det,26)!==1)throw"المفتاح غير صالح: المحدد ("+det+") ليس أوليًّا مع 26. جرّب 3 3 2 5.";
+var M=K.map(function(v){return mod(v)}),i,r,c;
+if(dec){var inv=0;for(i=1;i<26;i++)if(mod(det*i)===1)inv=i;
+for(r=0;r<n;r++)for(c=0;c<n;c++)M[c*n+r]=mod(inv*((r+c)%2?-1:1)*dt(minor(K,n,r,c),n-1))}
+var x=t.toUpperCase().replace(/[^A-Z]/g,"");
+if(!x)throw"أدخل نصًّا يحتوي حروفًا إنجليزية.";
+if(x.length%n){if(dec)throw"طول النص المشفر يجب أن يكون من مضاعفات حجم المصفوفة.";while(x.length%n)x+="X"}
+var o="",j,v,s,q;HL={M:M,n:n,x:x};
+for(j=0;j<x.length;j+=n){v=[];for(q=0;q<n;q++)v.push(x.charCodeAt(j+q)-65);
+for(i=0;i<n;i++){s=0;for(q=0;q<n;q++)s+=M[i*n+q]*v[q];o+=String.fromCharCode(mod(s)+65)}}
+return o}
+function hsz(){var n=+$("hn").value,D=n===2?[3,3,2,5]:[6,24,1,13,16,10,20,17,15];for(var i=0;i<9;i++){var e=$("k"+i);e.classList.toggle("hide",i>=n*n);if(i<n*n)e.value=D[i]}document.querySelector(".keys").style.gridTemplateColumns="repeat("+(n===2?4:3)+",1fr)"}
+function crack(){var e=$("err");e.textContent="";try{var t=$("inp").value,L=t.toUpperCase().replace(/[^A-Z]/g,""),res=[],s,i,d,c,q,ex;
+if(L.length<8)throw"أدخل نصًّا مشفّرًا أطول للتحليل.";
+for(s=0;s<26;s++){d=caesar(L,s,true);c=[];q=0;for(i=0;i<26;i++)c[i]=0;for(i=0;i<d.length;i++)c[d.charCodeAt(i)-65]++;for(i=0;i<26;i++){ex=EF[i]*d.length/100;q+=(c[i]-ex)*(c[i]-ex)/ex}res.push([q,s])}
+res.sort(function(a,b){return a[0]-b[0]});$("shift").value=res[0][1];wheel();
+$("out").textContent=res.slice(0,3).map(function(r){return"k="+r[1]+" → "+caesar(t,r[1],true)}).join("\n");hot=30;beep(700,.15);freq(L)}
+catch(x){e.textContent=tr(typeof x==="string"?x:"حدث خطأ غير متوقع.");$("out").textContent=""}}
+function freq(t){var L=t.toUpperCase().replace(/[^A-Z]/g,''),c=[],h='',i,p;for(i=0;i<26;i++)c[i]=0;for(i=0;i<L.length;i++)c[L.charCodeAt(i)-65]++;
+for(i=0;i<26;i++){p=L.length?c[i]*100/L.length:0;h+='<div class="fb"><u style="height:'+EF[i]*6+'px"></u><i style="height:'+Math.min(p*6,90)+'px"></i><b>'+String.fromCharCode(65+i)+'</b></div>'}$('freq').innerHTML=h}
+function steps(t,r,dec){var h='',i,j,q,s,v,c,P='ABCDEFGHIJKLMNOPQRSTUVWXYZ',m='';
+if(cur==='playfair'&&PF){for(i=0;i<25;i++)h+='<span'+(PF.pairs[0].indexOf(PF.sq[i])>=0?' class="hl"':'')+'>'+PF.sq[i]+'</span>';h='<div class="pg">'+h+'</div>'+PF.pairs.slice(0,10).map(function(p,k){return p[0]+p[1]+' → '+r.substr(k*2,2)}).join('  ·  ')}
+else if(cur==='hill'&&HL){var n=HL.n;h='K =\n';for(i=0;i<n;i++)h+='  '+HL.M.slice(i*n,i*n+n).join('  ')+'\n';
+for(i=0;i<Math.min(3,HL.x.length/n);i++){v=[];c=[];for(q=0;q<n;q++)v.push(HL.x.charCodeAt(i*n+q)-65);for(q=0;q<n;q++){s=0;for(j=0;j<n;j++)s+=HL.M[q*n+j]*v[j];c.push(mod(s))}h+='\n'+HL.x.substr(i*n,n)+' = ['+v+'] → ['+c+'] = '+r.substr(i*n,n)}h='<pre>'+h+'</pre>'}
+else if(cur==='vigenere'){var k=$('vk').value.toUpperCase().replace(/[^A-Z]/g,''),a=t.toUpperCase().replace(/[^A-Z]/g,'').slice(0,24),kk='';for(i=0;i<a.length;i++)kk+=k[i%k.length];h='<pre>'+a+'\n'+kk+'\n'+r.replace(/[^A-Za-z]/g,'').slice(0,24)+'</pre>'}
+else if(cur==='railfence'){var n2=Math.max(2,Math.min(10,parseInt($('rf').value,10)||3)),pl=Array.from(dec?r:t),rr=0,dd=1,rw=[];for(i=0;i<n2;i++)rw.push(pl.map(function(){return ' '}));for(i=0;i<pl.length;i++){rw[rr][i]=pl[i];if(rr===0)dd=1;else if(rr===n2-1)dd=-1;rr+=dd}h='<pre>'+rw.map(function(a){return a.join('')}).join('\n')+'</pre>'}
+else if(cur==='caesar'||cur==='atbash'||cur==='affine'){var K2=parseInt($('shift').value,10)||0,A2=parseInt($('aa').value,10),B2=parseInt($('ab').value,10);for(i=0;i<26;i++)m+=cur==='atbash'?atbash(P[i]):cur==='affine'?aff(P[i],A2,B2,dec):caesar(P[i],K2,dec);h='<pre>'+P+'\n'+m+'</pre>'}
+$('steps').innerHTML=h}
+function wheel(){var s=parseInt($('shift').value,10)||0,W=$('wheel');
+if(!W.firstChild){var o='',n='',i,a,L;for(i=0;i<26;i++){a=(i*360/26-90)*Math.PI/180;L=String.fromCharCode(65+i);o+='<text x="'+(150+120*Math.cos(a))+'" y="'+(150+120*Math.sin(a))+'">'+L+'</text>';n+='<text x="'+(150+88*Math.cos(a))+'" y="'+(150+88*Math.sin(a))+'">'+L+'</text>'}
+W.innerHTML='<svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="140" fill="none" stroke="#4a0009"/><circle cx="150" cy="150" r="104" fill="none" stroke="#ff1a2e"/><circle cx="150" cy="150" r="72" fill="none" stroke="#4a0009"/><g class="o">'+o+'</g><g class="i">'+n+'</g></svg>'}
+W.querySelector('.i').style.transform='rotate('+(-s*360/26)+'deg)'}
+var PH=['THE QUICK BROWN FOX','MEET ME AT MIDNIGHT','CYBER SECURITY MATTERS','KNOWLEDGE IS POWER','TRUST NO ONE','HIDDEN IN PLAIN SIGHT','THE ORACLE SPEAKS','ZERO DAY EXPLOIT'],CT=['caesar','atbash','vigenere','playfair'],KW=['MONARCHY','CIPHER','MATRIX','SECRET','VOID'],NM={ar:{caesar:'قيصر',atbash:'أتباش',vigenere:'فيجنير',playfair:'بلايفير'},en:{caesar:'Caesar',atbash:'Atbash',vigenere:'Vigenère',playfair:'Playfair'}};
+function cs(){$('cscore').textContent=(lang==='en'?'Score: ':'النقاط: ')+score}
+function cnew(){var en=lang==='en',p=PH[Math.random()*PH.length|0],ty=CT[Math.random()*Math.min(4,1+(score>>1))|0],k=ty==='caesar'?1+(Math.random()*25|0):KW[Math.random()*KW.length|0],ct,A=function(s){return s.toUpperCase().replace(/[^A-Z]/g,'')};
+if(ty==='caesar')ct=caesar(p,k);else if(ty==='atbash')ct=atbash(p);else if(ty==='vigenere')ct=vig(p,k);else ct=playfair(p,k);
+CG={ok:[A(p),ty==='playfair'?playfair(ct,k,true):A(p)]};
+var hint=NM[lang][ty];if(ty==='caesar')hint+=' · '+(score<4?(en?'shift ':'الإزاحة ')+k:(en?'unknown shift (try the auto-crack tool)':'الإزاحة مجهولة (جرّب أداة الكسر)'));else if(ty!=='atbash')hint+=' · '+(en?'key ':'المفتاح ')+k;
+$('cct').textContent=ct;$('chint').textContent=hint;$('cans').value='';$('cmsg').textContent='';cs()}
+function cchk(){if(!CG)return;var a=$('cans').value.toUpperCase().replace(/[^A-Z]/g,'');
+if(a&&CG.ok.indexOf(a)>=0){score++;$('cmsg').textContent=lang==='en'?'Correct! +1':'صحيح! +1';beep(880,.15);hot=30;cs();setTimeout(cnew,900)}else{$('cmsg').textContent=lang==='en'?'Wrong, try again.':'خطأ، حاول مرة أخرى.';beep(200,.2)}}
+function rail(t,n,dec){t=Array.from(t);var L=t.length,p=[],r=0,d=1,i,o=[];for(i=0;i<L;i++){p.push(r);if(r===0)d=1;else if(r===n-1)d=-1;r+=d}
+var ord=p.map(function(_,i){return i}).sort(function(a,b){return p[a]-p[b]||a-b});
+if(!dec)return ord.map(function(i){return t[i]}).join('');for(i=0;i<L;i++)o[ord[i]]=t[i];return o.join('')}
+function aff(t,a,b,dec){if(gcd(mod(a),26)!==1)throw'قيمة a يجب أن تكون أولية مع 26 (مثل 1 3 5 7 9 11 15 17 19 21 23 25).';var inv=0,i;for(i=1;i<26;i++)if(mod(a*i)===1)inv=i;return t.replace(/[a-z]/gi,function(ch){var s=ch<='Z'?65:97,x=ch.charCodeAt(0)-s;return String.fromCharCode(mod(dec?inv*(x-b):a*x+b)+s)})}
+var MA='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',MC='.-,-...,-.-.,-..,.,..-.,--.,....,..,.---,-.-,.-..,--,-.,---,.--.,--.-,.-.,...,-,..-,...-,.--,-..-,-.--,--..,-----,.----,..---,...--,....-,.....,-....,--...,---..,----.'.split(',');
+function morse(t,dec){if(!dec)return t.trim().toUpperCase().split(/\s+/).map(function(w){return w.split('').map(function(c){var i=MA.indexOf(c);return i<0?'':MC[i]}).filter(Boolean).join(' ')}).join(' / ');
+return t.trim().split(/\s*\/\s*/).map(function(w){return w.split(/\s+/).map(function(c){var i=MC.indexOf(c);return i<0?'?':MA[i]}).join('')}).join(' ')}
+function b64(t,dec){if(!dec)return btoa(unescape(encodeURIComponent(t)));try{return decodeURIComponent(escape(atob(t.replace(/\s/g,''))))}catch(e){throw'نص Base64 غير صالح.'}}
+function scr(r){var el=$('out'),n=0,L=r.length,S=Math.min(20,Math.max(8,L>>1));clearInterval(scT);if(still||L>300){el.textContent=r;return}
+scT=setInterval(function(){n++;var s=Math.floor(L*n/S),o=r.slice(0,s),i;for(i=s;i<L;i++)o+=/\s/.test(r[i])?r[i]:CH[Math.random()*CH.length|0];el.textContent=o;if(n>=S){clearInterval(scT);el.textContent=r}},40)}
+function params(){var k=[];for(var i=0;i<9;i++)k.push($('k'+i).value);return{s:$('shift').value,k:$('kw').value,v:$('vk').value,n:$('hn').value,h:k,r:$('rf').value,a:$('aa').value,b:$('ab').value}}
+function restore(e){var p=e.p||{};if(!document.querySelector('.tabs button[data-c="'+e.c+'"]'))e.c='caesar';$('hn').value=p.n||'2';hsz();(p.h||[]).forEach(function(v,i){$('k'+i).value=v});$('shift').value=p.s||3;$('kw').value=p.k||'MONARCHY';$('vk').value=p.v||'LEMON';$('rf').value=p.r||3;$('aa').value=p.a||5;$('ab').value=p.b||8;$('inp').value=e.t||'';setTab(e.c);wheel()}
+try{HIS=JSON.parse(localStorage.getItem('cv_h')||'[]')}catch(e){}
+function hsave(e){HIS.unshift(e);HIS=HIS.slice(0,10);try{localStorage.setItem('cv_h',JSON.stringify(HIS))}catch(x){}hrender()}
+function hrender(){var h='',sh=function(s){s=String(s).replace(/\s+/g,' ');return(s.length>16?s.slice(0,16)+'…':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')};HIS.forEach(function(e,i){var b=document.querySelector('.tabs button[data-c="'+e.c+'"]');h+='<button class="hi" data-i="'+i+'">'+(e.d?'🔓 ':'🔒 ')+(b?b.textContent:e.c)+' · '+sh(e.t)+' → '+sh(e.r)+'</button>'});$('hlist').innerHTML=h}
+function tok(){return btoa(unescape(encodeURIComponent(JSON.stringify({c:cur,t:$('inp').value,p:params()})))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function share(){var u=location.href.split('#')[0]+'#'+tok();try{navigator.clipboard.writeText(u);$('sh').textContent=UI[lang].shok}catch(e){$('sh').textContent=u}setTimeout(function(){$('sh').textContent=UI[lang].sh},1600)}
+function fromHash(){try{var h=location.hash.slice(1);if(h)restore(JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g,'+').replace(/_/g,'/'))))))}catch(e){}}
+function boot(){var b=$('boot'),pre=$('bt'),L=['> BOOTING CIPHER//VOID v2.0','> LOADING CLASSIC MODULES ........ [OK]','> CAESAR / ATBASH / VIGENERE / PLAYFAIR / HILL','> RAIL FENCE / AFFINE / MORSE / BASE64','> OPENING SECURE CHANNEL ........ [OK]','> ACCESS GRANTED_'],i=0,j=0,done=false,tm,seen=0;
+try{seen=sessionStorage.getItem('cv_b');sessionStorage.setItem('cv_b','1')}catch(e){}
+if(still||seen||location.hash.length>1){b.style.display='none';return}
+function end(){if(done)return;done=true;clearInterval(tm);b.classList.add('off');setTimeout(function(){b.style.display='none'},700)}
+b.onclick=end;document.addEventListener('keydown',end);
+tm=setInterval(function(){if(i>=L.length){clearInterval(tm);setTimeout(end,500);return}pre.textContent+=L[i][j++];if(j>=L[i].length){pre.textContent+='\n';i++;j=0}},9)}
+function run(dec){var e=$("err");e.textContent="";$('steps').innerHTML='';$('freq').innerHTML='';
+try{var t=$("inp").value,r;
+if(!t.trim())throw"اكتب النص أولًا.";
+if(cur==="caesar"){var k=parseInt($("shift").value,10);if(isNaN(k))throw"أدخل رقم الإزاحة.";r=caesar(t,k,dec)}
+else if(cur==="playfair"){if(!$("kw").value.trim())throw"أدخل كلمة مفتاحية.";r=playfair(t,$("kw").value,dec)}
+else if(cur==="atbash"){r=atbash(t)}
+else if(cur==="vigenere"){var vk=$("vk").value.toUpperCase().replace(/[^A-Z]/g,"");if(!vk)throw"أدخل كلمة مفتاحية.";r=vig(t,vk,dec)}
+else if(cur==="railfence"){var rn=parseInt($("rf").value,10);if(isNaN(rn))throw"أدخل عدد القضبان.";rn=Math.max(2,Math.min(10,rn));$("rf").value=rn;r=rail(t,rn,dec)}
+else if(cur==="affine"){var AA=parseInt($("aa").value,10),AB=parseInt($("ab").value,10);if(isNaN(AA)||isNaN(AB))throw"أدخل قيمتي a وb.";r=aff(t,AA,AB,dec)}
+else if(cur==="morse"){r=morse(t,dec)}
+else if(cur==="base64"){r=b64(t,dec)}
+else{var n=+$("hn").value,K=[];for(var i=0;i<n*n;i++)K.push(parseInt($("k"+i).value,10));if(K.some(isNaN))throw"أكمل أرقام المصفوفة.";r=hillN(t,K,dec)}
+scr(r);hot=30;beep(dec?520:880,.12);steps(t,r,dec);freq(r);hsave({c:cur,d:dec?1:0,t:t,p:params(),r:r})}
+catch(x){e.textContent=tr(typeof x==="string"?x:"حدث خطأ غير متوقع.");$("out").textContent=""}}
+$("enc").onclick=function(){run(false)};$("dec").onclick=function(){run(true)};
+$("cp").onclick=function(){var v=$("out").textContent;if(!v)return;
+try{navigator.clipboard.writeText(v);$("cp").textContent=UI[lang].ok}catch(e){$("cp").textContent=UI[lang].no}
+setTimeout(function(){$("cp").textContent=UI[lang].cp},1400)};
+$("use").onclick=function(){var v=$("out").textContent;if(v){$("inp").value=v;$("out").textContent=""}};
+setTab("caesar");$("lang").onclick=function(){setLang(lang==="en"?"ar":"en")};
+$("snd").onclick=function(){sndOn=!sndOn;$("snd").textContent=sndOn?"🔊":"🔇";beep(660,.1)};
+$("crk").onclick=crack;$("hn").onchange=hsz;
+$('shift').oninput=wheel;$('wheel').onclick=function(){$('shift').value=((parseInt($('shift').value,10)||0)+1)%26;wheel()};wheel();
+$('cbtn').onclick=function(){var s=$('chal').classList.contains('hide');$('chal').classList.toggle('hide',!s);$('mc').classList.toggle('hide',s);if(s&&!CG)cnew();cs()};
+$('cchk').onclick=cchk;$('cnew').onclick=cnew;$('sh').onclick=share;$('hclr').onclick=function(){HIS=[];try{localStorage.removeItem('cv_h')}catch(e){}hrender()};$('hlist').onclick=function(ev){var b=ev.target.closest('button');if(b&&b.dataset.i)restore(HIS[b.dataset.i])};
+var dp;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;$('inst').classList.remove('hide')});$('inst').onclick=function(){if(dp)dp.prompt()};
+try{if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}$('cans').onkeydown=function(e){if(e.key==='Enter')cchk()};
+
+/* Matrix rain */
+var cv=$("rain"),cx=cv.getContext("2d"),fs=18,cols,drops,w,h,hot=0;
+var CH="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ#$%&@<>{}[]=+*/\\|^~".split("");
+function size(){w=cv.width=innerWidth;h=cv.height=innerHeight;cols=Math.ceil(w/fs);drops=[];for(var i=0;i<cols;i++)drops[i]=Math.random()*-h/fs}
+size();addEventListener("resize",size);
+var still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+function draw(){cx.fillStyle="rgba(0,0,0,.08)";cx.fillRect(0,0,w,h);cx.font=fs+"px 'Share Tech Mono',monospace";
+for(var i=0;i<cols;i++){var c=CH[(Math.random()*CH.length)|0],y=drops[i]*fs;
+cx.fillStyle=Math.random()>(hot>0?.7:.96)?"#ffffff":(Math.random()>.5?"#ff1a2e":"#8a0010");
+cx.fillText(c,i*fs,y);
+if(y>h&&Math.random()>.975)drops[i]=0;drops[i]+=hot>0?2:1}if(hot>0)hot--}
+if(still){for(var n=0;n<120;n++)draw()}else setInterval(draw,50);
+/* title glitch */
+fromHash();boot();var T=$("ttl");if(!still)setInterval(function(){T.classList.add("g");setTimeout(function(){T.classList.remove("g")},140)},3500);
+})();
+</script>
+</body>
+</html>
+{
+  "name": "CIPHER//VOID",
+  "short_name": "CipherVoid",
+  "description": "Classic cipher lab: Caesar, Playfair, Hill and more",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#000000",
+  "theme_color": "#ff1a2e",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
+const CACHE = 'cipher-void-v1';
+const FILES = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
+      return res;
+    }).catch(() => caches.match('index.html')))
+  );
+const CACHE = 'cipher-void-v1';
+const FILES = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
+      return res;
+    }).catch(() => caches.match('index.html')))
+  );
+});    
+
+
+
+
